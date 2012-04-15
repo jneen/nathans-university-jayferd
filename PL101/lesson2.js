@@ -9,7 +9,7 @@ function duration(expr) {
   }
 
   if (expr.tag === 'par') {
-    return duration(endTime(expr.left), duration(expr.right));
+    return Math.max(duration(expr.left), duration(expr.right));
   }
 }
 

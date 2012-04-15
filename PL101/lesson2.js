@@ -26,7 +26,8 @@ function compile(musexpr) {
           start: time
         });
         break;
-      
+
+      // seq is the only one that needs to know about duration :)
       case 'seq':
         streamCompile(expr.left, time, out);
         streamCompile(expr.right, time + duration(expr.left), out);

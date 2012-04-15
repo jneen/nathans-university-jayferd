@@ -16,9 +16,7 @@ function duration(expr) {
 function compile(musexpr) {
   var out = [];
 
-  function streamCompile(expr, time) {
-    time = time || 0;
-
+  function _compile(expr, time) {
     switch (expr.tag) {
       case 'note':
         out.push({
@@ -40,6 +38,6 @@ function compile(musexpr) {
     }
   }
 
-  streamCompile(musexpr);
+  _compile(musexpr, 0);
   return out;
 }

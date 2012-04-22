@@ -23,6 +23,9 @@ note =
 duration = x:[1-9] xs:[0-9]*
   { return parseInt(x + xs) }
 
-pitch = pitch:[a-z] octave:[0-9] { return pitch + octave }
+pitch = pitch:[a-z] accidental:accidental? octave:[0-9]
+    { return pitch + accidental + octave }
+
+accidental = ("#" / "!" / "%")?
 
 space = " "+

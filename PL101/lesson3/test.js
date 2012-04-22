@@ -41,6 +41,19 @@ describe('mus', function() {
     });
   });
 
+  describe('accidentals', function() {
+    var bNatural = mus.parse('b%1')
+      , bSharp   = mus.parse('b#1')
+      , bFlat    = mus.parse('b!1')
+    ;
+
+    it("parses accidentals", function() {
+      assert.equal(bNatural.pitch, 'b%1');
+      assert.equal(bSharp.pitch, 'b#1');
+      assert.equal(bFlat.pitch, 'b!1');
+    });
+  });
+
   describe("optional duration", function() {
     var tree = mus.parse('a1');
 
@@ -61,7 +74,7 @@ describe('mus', function() {
   });
 
   describe("grouping", function() {
-    var tree = mus.parse("a1:2/[c1/e1 d1/f1]");
+    var tree = mus.parse("a1:2/[c1/e1 d1/f#1]");
 
     it('parses correctly', function() {
       assert.equal('par', tree.tag);

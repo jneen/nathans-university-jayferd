@@ -1,0 +1,10 @@
+{
+  "name": "nathansuniversity",
+  "version": "0.0.0",
+  "dependencies": {
+    "pegjs": "*"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  }
+}

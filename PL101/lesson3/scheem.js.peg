@@ -1,0 +1,15 @@
+start = expr
+
+expr = atom / form
+
+form =
+    "(" e:exprList ")" { return e }
+  / "()" { return []; }
+
+exprList =
+    e:expr space es:exprList { return [e].concat(es) }
+  / e:expr { return [e]; }
+
+atom = x:[-a-z0-9+*/]+ { return x.join('') }
+
+space = " "

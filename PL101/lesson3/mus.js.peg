@@ -1,0 +1,28 @@
+start = seqList
+
+seqList =
+    e:parList space es:seqList
+      { return { tag: 'seq', left: e, right: es } }
+  / parList
+
+parList =
+    e:parEl "/" p:parList
+      { return { tag: 'par', left: e, right: p } }
+  / parEl
+
+parEl = note / group
+
+group = "[" s:seqList "]" { return s }
+
+note =
+    p:pitch ":" d:duration
+      { return { tag: 'note', pitch: p, duration: d } }
+  / p:pitch
+      { return { tag: 'note', pitch: p, duration: 1 } }
+
+duration = x:[1-9] xs:[0-9]*
+  { return parseInt(x + xs) }
+
+pitch = pitch:[a-z] octave:[0-9] { return pitch + octave }
+
+space = " "+

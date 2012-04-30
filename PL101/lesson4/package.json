@@ -1,0 +1,8 @@
+{
+  "name": "nathansuniversity",
+  "version": "0.0.0",
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*"
+  }
+}

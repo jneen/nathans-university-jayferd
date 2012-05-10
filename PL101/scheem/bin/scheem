@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+
+var scheem = require('./..').scheem
+  , readline = require('readline')
+  , rl = readline.createInterface(process.stdin, process.stdout, null)
+  , inspect = require('sys').inspect
+  , env = {}
+;
+
+function d(name, val) {
+  console.log(name, ': (', typeof val, ') ', inspect(val));
+}
+
+function repl(prompt) {
+  rl.question(prompt, function(input) {
+    d('input', input);
+    var parsed = scheem.parse(input);
+
+    d('parsed', parsed);
+    var evald = scheem.eval(parsed, env);
+
+    env._ = evald;
+    d('evaled', evald);
+
+    if (typeof input === 'undefined') return;
+
+    repl(prompt);
+  });
+}
+
+repl('% ');

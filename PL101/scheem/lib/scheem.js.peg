@@ -1,0 +1,22 @@
+start = es:exprList { return ['begin'].concat(es) }
+
+expr = atom / form
+
+form =
+    "(" e:exprList ")" { return e }
+  / "()" { return []; }
+
+exprList =
+    e:expr space+ es:exprList { return [e].concat(es) }
+  / e:expr { return [e]; }
+
+atom = quote / number / negNumber / symbol / specialSymbol
+
+symbol    = x:[-a-z0-9+_]+ e:[?!]? { return x.concat(e).join('') }
+specialSymbol = "*" / "+" / "/" / "="
+number    = n:[0-9]+ { return parseInt(n.join('')) }
+negNumber = "-" n:number { return -n }
+
+quote = "'" e:expr { return ["quote", e] }
+
+space = " "

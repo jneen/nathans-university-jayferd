@@ -177,6 +177,9 @@ var scheem = (function() {
         } else {
           return eval_(expr[3], env);
         }
+
+      case 'eval':
+        return eval_(eval_(eval(expr[1], env), env), env);
     }
 
     var vec = [];

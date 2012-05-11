@@ -65,8 +65,16 @@ var scheem = (function() {
   }
 
   function define(expr, env) {
-    env.bindings[expr[1]] = eval_(expr[2], env);
-    return 0;
+    if (typeof expr[1] === 'string') {
+      return env.bindings[expr[1]] = eval_(expr[2], env);
+    }
+
+    var name = expr[1][0]
+      , argsList = expr[1].slice(1)
+      , body = expr[2]
+    ;
+
+    return env.bindings[name] = lambda(['lambda', argsList, body]);
   }
 
   function letOne(expr, env) {
@@ -78,17 +86,42 @@ var scheem = (function() {
     return eval_(expr[3], newEnv);
   }
 
-  function lambdaOne(expr, env) {
-    var name = expr[1]
+  function lambda(expr, env) {
+    var argNames = expr[1]
       , body = expr[2]
     ;
 
-    return function(arg) {
+    if (typeof argNames === 'string') argNames = [argNames];
+
+    return function() {
+      if (argNames.length !== arguments.length) {
+        throw new Error(
+          "Wrong number of arguments ("
+          +arguments.length+" for "+argNames.length
+          +")"
+        );
+      }
+
       var newVars = {};
-      newVars[name] = arg;
+      for (var i = 0, len = argNames.length; i < len; i += 1) {
+        newVars[argNames[i]] = arguments[i];
+      }
 
       return eval_(body, makeEnv(env, newVars));
     };
+  }
+
+  function let_(expr, env) {
+    var bindings = expr[1]
+      , body = expr[2]
+    ;
+
+    var newVars = {};
+    for (var i = 0, len = bindings.length; i < len; i += 1) {
+      newVars[bindings[i][0]] = bindings[i][1];
+    }
+
+    return eval_(body, makeEnv(env, newVars));
   }
 
   function makeEnv(outer, vars) {
@@ -134,7 +167,9 @@ var scheem = (function() {
 
       case 'let-one': return letOne(expr, env);
 
-      case 'lambda-one': return lambdaOne(expr, env);
+      case 'let': return let_(expr, env);
+
+      case 'lambda': return lambda(expr, env);
 
       case 'if':
         if (eval_(expr[1], env) === '#t') {

@@ -79,31 +79,31 @@ suite('booleanosity', function() {
 });
 
 suite('environments', function() {
-  test('let-one', function() {
+  test('let', function() {
     var env = { a: 1 }
       , e = scheem.evalString
     ;
 
     assert.equal(1, e('a', env));
-    assert.equal(2, e('(let-one a 2 a)', env));
-    assert.equal(3, e('(let-one a 2 (let-one a 3 a))', env));
-    assert.equal(2, e('(let-one a 2 (let-one b 3 a))', env));
+    assert.equal(2, e('(let ((a 2)) a)', env));
+    assert.equal(3, e('(let ((a 2)) (let ((a 3)) a))', env));
+    assert.equal(4, e('(let ((a 4)) (let ((b 3)) a))', env));
   });
 });
 
 suite('lambda', function() {
   var e = scheem.evalString;
 
-  test('lambda-one', function() {
-    assert.equal(5, e('((lambda-one x x) 5)'));
-    assert.equal(6, e('((lambda-one x (+ x 1)) 5)'));
-    assert.equal(7, e('(((lambda-one x (lambda-one y (+ x y))) 3) 4)'));
-    assert.equal(8, e('(((lambda-one x (lambda-one x (+ x x))) 3) 4)'));
+  test('lambda', function() {
+    assert.equal(5, e('((lambda x x) 5)'));
+    assert.equal(6, e('((lambda x (+ x 1)) 5)'));
+    assert.equal(7, e('(((lambda x (lambda y (+ x y))) 3) 4)'));
+    assert.equal(8, e('(((lambda x (lambda x (+ x x))) 3) 4)'));
   });
 
   test('recursion', function() {
     assert.equal(24, e(
-      '(define fac (lambda-one x (if (= x 0) 1 (* x (fac (- x 1)))))) ' +
+      '(define fac (lambda x (if (= x 0) 1 (* x (fac (- x 1)))))) ' +
       '(fac 4)'
     ));
   });
@@ -112,12 +112,22 @@ suite('lambda', function() {
   test('make-account', function() {
     var env = {};
     var result = e(
-      '(define make-account (lambda-one (bal) (lambda-one (amt) (set! bal (+ bal amt)))))'
+      '(define make-account (lambda (bal) (lambda (amt) (set! bal (+ bal amt)))))'
     +' (define a (make-account 20))'
     +' (a -10)'
     +' (a 5)'
     );
 
     assert.equal(result, 15);
+  });
+
+  test('multiple arguments', function() {
+    assert.equal(50, e('((lambda (x y) (* x y)) 5 10)'));
+  });
+
+  test('wrong # of arguments', function() {
+    assert.throws(function() {
+      e('((lambda (x y) (* x y)) 5)');
+    });
   });
 });
